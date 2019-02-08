@@ -1,8 +1,7 @@
 
 # coding: utf-8
 
-# In[53]:
-
+# In[49]:
 
 import pandas as pd
 import numpy as np
@@ -28,58 +27,52 @@ from sklearn.cross_validation import train_test_split
 from skimage.io import imread
 from skimage import img_as_float
 import pylab
+from time import time
 
 
-# In[8]:
-
+# In[2]:
 
 image = imread('parrots.jpg')
 
 image
 
 
-# In[17]:
+# In[5]:
 
-
+get_ipython().magic('matplotlib inline')
 pylab.imshow(image)
 
 
 # In[10]:
-
 
 binimage = img_as_float(image)
 
 binimage
 
 
-# In[20]:
-
+# In[11]:
 
 pylab.imshow(binimage)
 
 
-# In[22]:
-
+# In[12]:
 
 len(binimage)*len(binimage[0])
 
 
-# In[47]:
-
+# In[13]:
 
 objects = np.zeros((len(binimage)*len(binimage[0]), 3), dtype=np.float64)
 
 objects
 
 
-# In[48]:
-
+# In[14]:
 
 pd.DataFrame(objects)
 
 
-# In[51]:
-
+# In[15]:
 
 k = 0
 
@@ -96,8 +89,7 @@ for i in range(len(binimage)):
 pd.DataFrame(objects, columns = ['r','g','b'])
 
 
-# In[181]:
-
+# In[16]:
 
 colors = 16
 
@@ -106,20 +98,17 @@ kmeans = KMeans(random_state=241, init='k-means++', n_clusters = colors).fit(obj
 kmeans
 
 
-# In[182]:
-
+# In[17]:
 
 kmeans.cluster_centers_ 
 
 
-# In[183]:
-
+# In[18]:
 
 kmeans.predict(objects)
 
 
-# In[184]:
-
+# In[19]:
 
 df = pd.DataFrame(objects, columns = ['r','g','b'])
 df['clust'] = pd.Series(kmeans.predict(objects))
@@ -127,8 +116,7 @@ df['clust'] = pd.Series(kmeans.predict(objects))
 df
 
 
-# In[201]:
-
+# In[20]:
 
 mean_color = np.zeros((colors, 3))
 
@@ -146,14 +134,12 @@ for i in range(colors):
 mean_color
 
 
-# In[202]:
-
+# In[21]:
 
 median_color
 
 
-# In[240]:
-
+# In[22]:
 
 image_mean = np.zeros((len(binimage), len(binimage[0]), 3))
 
@@ -162,8 +148,7 @@ image_median = np.zeros((len(binimage), len(binimage[0]), 3))
 image_mean
 
 
-# In[241]:
-
+# In[31]:
 
 k = 0
 
@@ -180,20 +165,94 @@ for i in range(len(binimage)):
         k = k+1
 
 
-# In[242]:
-
+# In[32]:
 
 image_mean
 
 
-# In[243]:
-
+# In[37]:
 
 pylab.imshow(image_mean)
 
 
-# In[245]:
-
+# In[38]:
 
 pylab.imshow(image_median)
+
+
+# In[65]:
+
+def psnr(image_mean, image, image_median):
+    
+    mse = np.mean((image - image_mean) ** 2)
+
+    psnr1 = 10 * math.log10(float(1) / mse)
+
+    mse = np.mean((image - image_median) ** 2)
+
+    psnr2 = 10 * math.log10(float(1) / mse)
+
+    return psnr1, psnr2
+
+
+# In[67]:
+
+colors = 0
+
+for colors in range(160):
+    
+    colors = colors + 1
+
+    kmeans = KMeans(random_state=241, init='k-means++', n_clusters = colors).fit(objects)
+
+    df = pd.DataFrame(objects, columns = ['r','g','b'])
+    df['clust'] = pd.Series(kmeans.predict(objects))
+
+    mean_color = np.zeros((colors, 3))
+
+    median_color = np.zeros((colors, 3))
+
+    for i in range(colors):
+
+        mean_color[i] = np.mean(df[df['clust'] == i])[['r','g','b']]
+
+        median_color[i][0] = np.median(df[df['clust'] == i]['r'])
+        median_color[i][1] = np.median(df[df['clust'] == i]['g'])
+        median_color[i][2] = np.median(df[df['clust'] == i]['b'])
+
+
+    image_mean = np.zeros((len(binimage), len(binimage[0]), 3))
+
+    image_median = np.zeros((len(binimage), len(binimage[0]), 3))
+
+    k = 0
+
+    for i in range(len(binimage)):
+
+        for j in range(len(binimage[i])):
+
+            cl = int(df.loc[k]['clust'])
+
+            image_mean[i][j] = mean_color[cl]
+
+            image_median[i][j] = median_color[cl]
+
+            k = k+1
+
+    psnr1, psnr2 = psnr(image_mean, binimage, image_median)
+    
+    print("Colors = ",colors, " PSNR = ", max(psnr1, psnr2))
+    
+    if max(psnr1, psnr2) >= 20:
+        
+        break
+        
+pylab.imshow(image_mean)
+
+print("Минимум цветов = ", color, " PSNR = ", max(psnr1, psnr2))
+
+
+# In[ ]:
+
+
 
