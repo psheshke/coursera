@@ -3,10 +3,12 @@
 
 # In[1]:
 
+
 #https://scikit-learn.org/stable/auto_examples/cluster/plot_color_quantization.html#example-cluster-plot-color-quantization-py
 
 
 # In[10]:
+
 
 # Authors: Robert Layton <robertlayton@gmail.com>
 #          Olivier Grisel <olivier.grisel@ensta.org>
@@ -28,6 +30,7 @@ import pandas as pd
 
 # In[19]:
 
+
 n_colors = 64
 
 # Load the Summer Palace photo
@@ -38,10 +41,12 @@ china
 
 # In[20]:
 
+
 pylab.imshow(china)
 
 
 # In[21]:
+
 
 # Convert to floats instead of the default 8 bits integer coding. Dividing by
 # 255 is important so that plt.imshow behaves works well on float data (need to
@@ -54,6 +59,7 @@ china
 
 # In[22]:
 
+
 # Load Image and transform to a 2D numpy array.
 w, h, d = original_shape = tuple(china.shape)
 assert d == 3
@@ -61,6 +67,7 @@ image_array = np.reshape(china, (w * h, d))
 
 
 # In[26]:
+
 
 print("Fitting model on a small sub-sample of the data")
 t0 = time()
@@ -71,6 +78,7 @@ print("done in %0.3fs." % (time() - t0))
 
 # In[28]:
 
+
 # Get labels for all points
 print("Predicting color indices on the full image (k-means)")
 t0 = time()
@@ -79,6 +87,7 @@ print("done in %0.3fs." % (time() - t0))
 
 
 # In[30]:
+
 
 codebook_random = shuffle(image_array, random_state=0)[:n_colors]
 print("Predicting color indices on the full image (random)")
@@ -90,6 +99,7 @@ print("done in %0.3fs." % (time() - t0))
 
 
 # In[32]:
+
 
 def recreate_image(codebook, labels, w, h):
     """Recreate the (compressed) image from the code book & labels"""
@@ -105,20 +115,24 @@ def recreate_image(codebook, labels, w, h):
 
 # In[41]:
 
+
 recreate_image(kmeans.cluster_centers_, labels, w, h)
 
 
 # In[38]:
+
 
 labels
 
 
 # In[39]:
 
+
 kmeans.cluster_centers_[62]
 
 
 # In[35]:
+
 
 d = kmeans.cluster_centers_.shape[1]
 
@@ -127,6 +141,7 @@ d
 
 # In[37]:
 
+
 image = np.zeros((w, h, d))
 
 image
@@ -134,10 +149,16 @@ image
 
 # In[40]:
 
+
 w, h, d
 
 
-# In[ ]:
+# In[45]:
 
 
+import numpy as np
+from sklearn.metrics import roc_auc_score
+y_true = np.array([0, 0, 1, 1])
+y_scores = np.array([0.1, 0.4, 0.9, 0.8])
+roc_auc_score(y_true, y_scores)
 

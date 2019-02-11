@@ -3,6 +3,7 @@
 
 # In[49]:
 
+
 import pandas as pd
 import numpy as np
 import math
@@ -32,6 +33,7 @@ from time import time
 
 # In[2]:
 
+
 image = imread('parrots.jpg')
 
 image
@@ -39,11 +41,13 @@ image
 
 # In[5]:
 
-get_ipython().magic('matplotlib inline')
+
+get_ipython().run_line_magic('matplotlib', 'inline')
 pylab.imshow(image)
 
 
 # In[10]:
+
 
 binimage = img_as_float(image)
 
@@ -52,15 +56,18 @@ binimage
 
 # In[11]:
 
+
 pylab.imshow(binimage)
 
 
 # In[12]:
 
+
 len(binimage)*len(binimage[0])
 
 
 # In[13]:
+
 
 objects = np.zeros((len(binimage)*len(binimage[0]), 3), dtype=np.float64)
 
@@ -69,10 +76,12 @@ objects
 
 # In[14]:
 
+
 pd.DataFrame(objects)
 
 
 # In[15]:
+
 
 k = 0
 
@@ -91,6 +100,7 @@ pd.DataFrame(objects, columns = ['r','g','b'])
 
 # In[16]:
 
+
 colors = 16
 
 kmeans = KMeans(random_state=241, init='k-means++', n_clusters = colors).fit(objects)
@@ -100,15 +110,18 @@ kmeans
 
 # In[17]:
 
+
 kmeans.cluster_centers_ 
 
 
 # In[18]:
 
+
 kmeans.predict(objects)
 
 
 # In[19]:
+
 
 df = pd.DataFrame(objects, columns = ['r','g','b'])
 df['clust'] = pd.Series(kmeans.predict(objects))
@@ -117,6 +130,7 @@ df
 
 
 # In[20]:
+
 
 mean_color = np.zeros((colors, 3))
 
@@ -136,10 +150,12 @@ mean_color
 
 # In[21]:
 
+
 median_color
 
 
 # In[22]:
+
 
 image_mean = np.zeros((len(binimage), len(binimage[0]), 3))
 
@@ -149,6 +165,7 @@ image_mean
 
 
 # In[31]:
+
 
 k = 0
 
@@ -167,20 +184,24 @@ for i in range(len(binimage)):
 
 # In[32]:
 
+
 image_mean
 
 
 # In[37]:
+
 
 pylab.imshow(image_mean)
 
 
 # In[38]:
 
+
 pylab.imshow(image_median)
 
 
 # In[65]:
+
 
 def psnr(image_mean, image, image_median):
     
@@ -196,6 +217,7 @@ def psnr(image_mean, image, image_median):
 
 
 # In[67]:
+
 
 colors = 0
 
@@ -250,9 +272,4 @@ for colors in range(160):
 pylab.imshow(image_mean)
 
 print("Минимум цветов = ", color, " PSNR = ", max(psnr1, psnr2))
-
-
-# In[ ]:
-
-
 
