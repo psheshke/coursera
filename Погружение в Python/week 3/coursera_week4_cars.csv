@@ -1,0 +1,7 @@
+car_type;brand;passenger_seats_count;photo_file_name;body_whl;carrying;extra
+car87;Nissan xTtrail;4;f1.jpeg;;02.���;
+truck87;Man;;f2.png;8x3x2.5;20;
+truck;;;f2.png;;20;
+car;;4;f3.jpeg;;02.���;
+;;;;;;
+spec_machine9;;;f4;;01.���;Легкая техника для уборки снега
