@@ -54,7 +54,6 @@ var friends = [
 var result = lib.query(
     friends,
     lib.select('name', 'gender', 'email'),
-    lib.select('email'),
     lib.filterIn('favoriteFruit', ['Яблоко', 'Картофель'])
 );
 
